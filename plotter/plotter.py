@@ -19,7 +19,7 @@ class MyPlotter():
         for sphere,color in zip(spheres, colors):
             self.pl.add_mesh(sphere, color=color, show_edges=False)
         for cyl in cylinders:
-            self.pl.add_mesh(cyl, color="tan", show_edges=False)
+            self.pl.add_mesh(cyl, color="white", show_edges=False)
 
     def add_prb(self, prbname, jmol_colors_df):
         self.pl.subplot(0, 1)
@@ -28,7 +28,7 @@ class MyPlotter():
         for sphere,color in zip(spheres, colors):
             self.pl.add_mesh(sphere, color=color, show_edges=False)
         for cyl in cylinders:
-            self.pl.add_mesh(cyl, color="tan", show_edges=False)
+            self.pl.add_mesh(cyl, color="white", show_edges=False)
 
 def get_spheres_colors_and_cylinders(filename, jmol_colors_df):
     geom = geometry.geometry.Geometry(filename)
@@ -62,6 +62,6 @@ def get_spheres_colors_and_cylinders(filename, jmol_colors_df):
         vect_bond = pos2 - pos1
         middle_bond = 0.5 * (pos1 + pos2)
 
-        mesh_cylinder = pv.Cylinder(center=middle_bond, direction=vect_bond, radius=.2, height=np.linalg.norm(vect_bond))
+        mesh_cylinder = pv.Cylinder(center=middle_bond, direction=vect_bond, radius=.1, height=np.linalg.norm(vect_bond))
         cylinders.append(mesh_cylinder)
     return spheres, colors, cylinders
