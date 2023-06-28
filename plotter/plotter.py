@@ -13,14 +13,17 @@ class MyPlotter():
         self.pl = pv.Plotter(shape=(1,2))
         self.actors = []
 
-    def add_mol(self, name, title, jmol_colors_df, subplot_x=0, subplot_y=0):
+    def add_mol(self, filename, title, jmol_colors_df, subplot_x=0, subplot_y=0):
         self.pl.subplot(subplot_x, subplot_y)
+#        self.pl.enable_mesh_picking(callback=self.oneMeshwasPicked, left_clicking=True)
         self.pl.add_text(title, font_size=30)
 
-        geom = geometry.geometry.Geometry(name)
-        spheres = []
-        cylinders = []
-        colors = []
+        geom = geometry.geometry.Geometry(filename)
+
+        # Adding atoms
+        label_points = []
+        label_labels = []
+        iat=1
         for at in geom.atoms:
             mesh_sphere = pv.Sphere(radius=0.5, center=[at['x'], at['y'], at['z']])
             a=jmol_colors_df[jmol_colors_df.Element==at["label"]]
@@ -34,8 +37,14 @@ class MyPlotter():
                 B=0
             color=[R, G, B]
             actor = self.pl.add_mesh(mesh_sphere, color=color, show_edges=False)
+            label_points.append(mesh_sphere.GetPoint(1))
+            label_labels.append(iat)
+            iat = iat + 1
             self.actors.append(actor)
 
+        vtk_labels = self.pl.add_point_labels(label_points, label_labels, font_size = 20, always_visible=True)
+
+        # Adding bonds
         molecularGraph = graph_theory.detect_cycle.MolecularGraph(filename)
         for e in molecularGraph.getEdges():
             idx1 = e.GetBeginAtomIdx()
@@ -47,7 +56,9 @@ class MyPlotter():
             vect_bond = pos2 - pos1
             middle_bond = 0.5 * (pos1 + pos2)
             mesh_cylinder = pv.Cylinder(center=middle_bond, direction=vect_bond, radius=.1, height=np.linalg.norm(vect_bond))
-            cylinders.append(mesh_cylinder)
+            actor = self.pl.add_mesh(mesh_cylinder, color="white", show_edges=False)
 
-        for cyl in cylinders:
-            actor = self.pl.add_mesh(cyl, color="white", show_edges=False)
+    def oneMeshwasPicked(self, mesh):
+        print(mesh)
+        print(mesh.getPosition())
+
