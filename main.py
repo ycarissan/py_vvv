@@ -20,8 +20,8 @@ def main(refname, prbname, a0, b0, c0, a1, b1, c1):
 
     p=plotter.plotter.MyPlotter()
 
-    p.add_ref(refname, jmol_colors_df)
-    p.add_prb(prbname, jmol_colors_df)
+    p.add_mol(refname, "Reference", jmol_colors_df, 0, 0)
+    p.add_mol(prbname, "Probe", jmol_colors_df, 0, 1)
 
     p.pl.link_views()
     p.pl.show()
